@@ -23,7 +23,8 @@ class sql_analise():
         self.conn.commit()
         cursor.close()
         return columns
-    def count_dados(self, dados):
+
+    def histograma(self, dados):
         cursor = self.conn.cursor()
         cursor.execute(f"""
             select count({dados}), {dados} from desenv_processos.processos_movimento pm 
@@ -37,7 +38,7 @@ class sql_analise():
         return df
 
     def grafico(self, df, dados):
-        df.plot(kind='bar', x=dados, y=f'count({dados})')
+        df.plot(kind='bar', x=dados, y=f"count({dados})")
         mean = df[f'count({dados})'].mean()
         plt.ylim(mean - 1500, mean + 1500)
         plt.xlabel('staus')
@@ -51,5 +52,5 @@ if __name__ == "__main__":
     dados_tabela = sq.quais_esquemas_temos('desenv_processos', 'processos_movimento')
     # para a coluna data, indice 1 cuidado são 10000 itens
     for colunas in dados_tabela[2:]:
-        df = sq.count_dados(colunas)
+        df = sq.histograma(colunas)
         sq.grafico(df, dados=colunas)
